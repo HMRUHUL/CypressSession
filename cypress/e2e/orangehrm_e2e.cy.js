@@ -29,6 +29,9 @@ describe('OrangeHRM End to End Testing', () => {
     cy.get("[type='submit']").click()
   });
 
+  cy.waitTillVisible = function (h6) {
+    
+  };
   it('Validate the whole OrangeHRM flow', () => {
     cy.waitTillVisible('h6')
     cy.get('h6').should("have.text", "Dashboard")
