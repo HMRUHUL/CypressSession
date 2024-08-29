@@ -1,19 +1,16 @@
 {
   "name": "cypress",
   "version": "1.0.0",
-  "main": "index.js",
+  "description": "",
+  "main": "cypress.config.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
-  "license": "ISC",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/ruhulamin731/CypressSession.git"
+  "private": true,
+  "dependencies": {
+    "cypress": "^13.13.3"
   },
-  "bugs": {
-    "url": "https://github.com/ruhulamin731/CypressSession/issues"
-  },
-  "homepage": "https://github.com/ruhulamin731/CypressSession#readme",
-  "description": ""
+  "devDependencies": {
+    "cypress-file-upload": "^5.0.8"
+  }
 }

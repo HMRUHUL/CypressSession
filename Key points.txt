@@ -1,0 +1,30 @@
+- Run all the test runner files in headed mode:
+cypress run --spec "cypress/integration/**/*.spec.js" --headed
+- Going back to the previous page:
+cy.go(-1)
+- Use testIsolation is false, you can write separate it() blocks and the sessions,cookies,localStorage would not be cleared, and the page will not be cleared as well
+** testIsolation:false  (In the config.js file).
+- To run the files in headed mode by sequentially running the spec files:
+```  npx cypress run --headed --spec "cypress/e2e/Sites.cy.js", "cypress/e2e/Users.cy.js", "cypress/e2e/Assets.cy.js", "cypress/e2e/WorkOrders.cy.js"
+```
+- After creating a specPattern of files: 
+To run the whole flow in headed mode:
+``` npx cypress run --headed
+For running the automation flow in  a specific browser:
+``` npx cypress run --browser chrome
+For including mochawesome report:
+install the report: npm i cypress-mochawesome-reporter
+include commands in config.js: reporter: 'cypress-mochawesome-reporter' 
+			       require('cypress-mochawesome-reporter/plugin')(on); [Within setup node events]
+Add to cypress/support/e2e.js: import 'cypress-mochawesome-reporter/register';	
+
+For using Faker JS, do this:
+
+Install Faker using the below command:
+npm install @faker-js/faker --save-dev
+
+// Import the Faker library
+const { faker } = require('@faker-js/faker');
+
+
+
