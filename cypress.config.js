@@ -1,11 +1,21 @@
 const { defineConfig } = require("cypress");
 
 module.exports = defineConfig({
+  chromeWebSecurity:false,
+  // reporter: 'cypress-mochawesome-reporter',
   e2e: {
+    baseUrl:"https://opensource-demo.orangehrmlive.com//",
+    watchForFileChanges:false,
+    autoRefresh:false,
+    // testIsolation:false,
+    supportFile: false,
+    // defaultCommandTimeout: 5000,
     setupNodeEvents(on, config) {
-      // implement node event listeners here
+      // require('cypress-mochawesome-reporter/plugin')(on);
+      config.specPattern = [
+        'cypress/e2e/orangehrm_e2e.cy.js',
+      ]
+      return config;
     },
-    //specPattern: "cypress/integration/**/*.{js,ts,jsx,tsx}", // Support both .js and .ts files
-    baseUrl: "https://www.google.com",
   },
 });
