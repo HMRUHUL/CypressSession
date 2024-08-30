@@ -1,9 +1,8 @@
 // Import the Faker library
 import { faker } from '@faker-js/faker';
+import 'cypress-file-upload';
 
 describe('OrangeHRM End to End Testing', () => {
-  // const baseUrl = 'https://opensource-demo.orangehrmlive.com/';
-  // Handle uncaught exceptions to prevent test failure
   Cypress.on('uncaught:exception', (err, runnable) => {
     console.log('Caught an exception:', err);
     return false;
@@ -34,7 +33,6 @@ describe('OrangeHRM End to End Testing', () => {
     password = password.split('').sort(() => 0.5 - Math.random()).join('');
     return password;
   }
-
   // Hooks
   before(() => {
     // Before all tests, visit the base URL
@@ -46,7 +44,6 @@ describe('OrangeHRM End to End Testing', () => {
     cy.get("[type='submit']").click()
   });
   function fillUserId() {
-    // const userId = generateRandomUserId();
     const length = faker.number.int({ min: 1, max: 10 });
     const userId = faker.string.numeric(length);
     cy.log(userId);
@@ -55,7 +52,6 @@ describe('OrangeHRM End to End Testing', () => {
     cy.wait(1000);
     cy.get('body').then(($body) => {
       if ($body.find('span:contains("Employee Id already exists")').length > 0) {
-        // Retry if the username is not unique
         cy.log('Employee Id is already taken, generating a new one...');
         fillUserId();
       }
@@ -130,11 +126,9 @@ describe('OrangeHRM End to End Testing', () => {
 
     // Log In Using Newly Created Employee Creds
     cy.fixture(employeeDataFile).then((employee)=>{
-      //Login with employee creds.
       cy.get("input[name='username']").type(employee.username)
       cy.get("input[name='password']").type(employee.password)
       cy.get("[type='submit']").click()
-      // Assert that the Newly Created Employee Full Name is showing beside the profile icon.
       cy.get("p.oxd-userdropdown-name").should("have.text",fullName)
     })
   });
@@ -144,7 +138,6 @@ describe('OrangeHRM End to End Testing', () => {
     cy.get("span img").click()
     cy.get("li a").contains("Logout").click()
     cy.waitTillVisible("h5")
-    // clear employeedata object after all tests are completed
     cy.writeFile(`cypress/fixtures/${employeeDataFile}`,{});
   });
 });
