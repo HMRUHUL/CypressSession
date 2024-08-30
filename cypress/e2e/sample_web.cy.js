@@ -1,11 +1,11 @@
 // Import the Faker library
-const { faker } = require('@faker-js/faker');
-
+import { faker } from '@faker-js/faker';
 
 describe('OrangeHRM End to End Testing', () => {
   // const baseUrl = 'https://opensource-demo.orangehrmlive.com/';
   const adminUserName = "Admin"
   const adminPassword = "admin123"
+  console.log(adminPassword)
 
   const employeeDataFile = "employeeData.json" // File to save employee data
   
@@ -24,15 +24,22 @@ describe('OrangeHRM End to End Testing', () => {
     cy.visit('/');
     cy.title().should("eq", "OrangeHRM")
     // Login using Admin credentials.
-    cy.get("input[name='username'").type(adminUserName)
-    cy.get("input[name='password'").type(adminPassword)
+    cy.get("input[name='username']").type(adminUserName)
+    cy.get("input[name='password']").type(adminPassword)
     cy.get("[type='submit']").click()
   });
+  // Handle uncaught exceptions to prevent test failure
+  Cypress.on('uncaught:exception', (err, runnable) => {
+    console.log('Caught an exception:', err);
+    return false;
+  });
 
-  cy.waitTillVisible = function (h6) {
-    
+  cy.waitTillVisible = () => {
+   cy.wait(5000);
   };
   it('Validate the whole OrangeHRM flow', () => {
+    cy.intercept({ resourceType: /xhr|fetch/ }, { log: false });
+
     cy.waitTillVisible('h6')
     cy.get('h6').should("have.text", "Dashboard")
     //click on PIM
@@ -42,15 +49,16 @@ describe('OrangeHRM End to End Testing', () => {
     cy.waitTillVisible('h6')
 
     // Create a new employee using Faker
-    const firstName = faker.name.firstName();
-    const lastName = faker.name.lastName();
-    const fullName = firstName+" "+lastName
+    const firstName = faker.person.firstName();
+    const lastName =  faker.person.lastName();
+    const fullName = firstName+" "+lastName;
+    cy.log(fullName);
     // const employeeId = faker.datatype.uuid(); // Using UUID for a unique employee ID
     // cy.log("EmployeeID",employeeId)
     const username = firstName + lastName
     const password = generateRandomPassword()
     //Fill the employee form
-    cy.get("input[name='firstName'").type(firstName)
+    cy.get("input[name='firstName']").type(firstName)
     cy.get("input[name='lastName']").type(lastName)
     // Click On Create Login Details toggle
     cy.get("input[type='checkbox']").click({ force: true })
@@ -63,7 +71,7 @@ describe('OrangeHRM End to End Testing', () => {
     cy.get('.oxd-text--toast-message').should("have.text", "Successfully Saved")
     cy.waitTillVisible('h6')
     cy.get('h6').should("contain.text", fullName)
-
+    //
     // Save Employee Details to a file
     cy.writeFile(`cypress/fixtures/${employeeDataFile}`,{
       username,
@@ -82,7 +90,7 @@ describe('OrangeHRM End to End Testing', () => {
     // Assert employee name after searching the employee in the Directory
     // Will fail due to extra spaces in the name, need to trim it.
     // cy.get(".orangehrm-directory-card-header").should("have.text",firstName + " " + lastName)
-    
+
     cy.get(".orangehrm-directory-card-header")
       .invoke('text')
       .then((text) => {
@@ -95,11 +103,11 @@ describe('OrangeHRM End to End Testing', () => {
     cy.get("li a").contains("Logout").click()
     cy.waitTillVisible("h5")
 
-    // Log In Using Newly Created Employee Creds 
+    // Log In Using Newly Created Employee Creds
     cy.fixture(employeeDataFile).then((employee)=>{
       //Login with employee creds.
-      cy.get("input[name='username'").type(employee.username)
-      cy.get("input[name='password'").type(employee.password)
+      cy.get("input[name='username']").type(employee.username)
+      cy.get("input[name='password']").type(employee.password)
       cy.get("[type='submit']").click()
       // Assert that the Newly Created Employee Full Name is showing beside the profile icon.
       cy.get("p.oxd-userdropdown-name").should("have.text",fullName)

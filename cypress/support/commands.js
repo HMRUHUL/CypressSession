@@ -32,6 +32,7 @@ Cypress.on('uncaught:exception', (err, runnable) => {
 Cypress.Commands.add("waitTillVisible",(selector,timeout=10000)=>{
     cy.get(selector,{timeout}).should("be.visible")
 });// ***********************************************
+
 // This example commands.js shows you how to
 // create various custom commands and overwrite
 // existing commands.
