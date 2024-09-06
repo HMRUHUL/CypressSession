@@ -6,15 +6,14 @@ module.exports = defineConfig({
   e2e: {
     baseUrl:"https://opensource-demo.orangehrmlive.com//",
     watchForFileChanges:false,
-    autoRefresh:false,
+    autoRefresh:true,
     // testIsolation:false,
-    supportFile: false,
     // defaultCommandTimeout: 5000,
     setupNodeEvents(on, config) {
       // require('cypress-mochawesome-reporter/plugin')(on);
-      // config.specPattern = [
-      //   'cypress/e2e/sample_web.cy.js',
-      // ]
+      config.specPattern = [
+        'cypress/e2e/*.js',
+      ]
       return config;
     },
   },

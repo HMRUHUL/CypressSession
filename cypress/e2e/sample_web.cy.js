@@ -1,20 +1,13 @@
 // Import the Faker library
 import { faker } from '@faker-js/faker';
-import 'cypress-file-upload';
 
 describe('OrangeHRM End to End Testing', () => {
-  Cypress.on('uncaught:exception', (err, runnable) => {
-    console.log('Caught an exception:', err);
-    return false;
-  });
-  cy.waitTillVisible = () => {
-    cy.wait(5000);
-  };
+
   const adminUserName = "Admin"
   const adminPassword = "admin123"
   console.log(adminPassword)
   const employeeDataFile = "employeeData.json" // File to save employee data
-  
+
   function generateRandomPassword() {
     const allChars = 'abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+[]{}|;:,.<>?'
     const lowercase = 'abcdefghijklmnopqrstuvwxyz';
@@ -35,7 +28,6 @@ describe('OrangeHRM End to End Testing', () => {
   }
   // Hooks
   beforeEach(() => {
-    // Before all tests, visit the base URL
     cy.visit('/');
     cy.title().should("eq", "OrangeHRM")
     cy.waitTillVisible()
@@ -57,6 +49,12 @@ describe('OrangeHRM End to End Testing', () => {
       }
     });
   }
+ function fillUserI(){
+   cy.wait(1000);
+   cy.get('label').contains("Employee Id").parent().siblings('div').find('input').invoke("val").as('user');
+ }
+
+
 
   it('OrangeHRM flow for Admin', () => {
     cy.intercept({ resourceType: /xhr|fetch/ }, { log: false });
@@ -88,6 +86,7 @@ describe('OrangeHRM End to End Testing', () => {
     cy.get('input[name = "middleName"]').type(middleName);
     cy.get("input[name='lastName']").type(lastName)
     fillUserId(); //Generate UserId
+
     // Create Login Details
     cy.get("input[type='checkbox']").click({ force: true });
     cy.get('label').contains("Username").parent().siblings('div').find('input')
@@ -96,7 +95,14 @@ describe('OrangeHRM End to End Testing', () => {
         .type(password)
     cy.get('label').contains("Confirm Password").parent().parent().children().find('input')
         .type(password)
-    cy.get("button[type='submit']").click()
+    cy.get("button[type='submit']").click();
+
+    cy.get('@user').then((user) => {
+      cy.log('Employee Id outside the function:', user);
+      userId = user;
+      cy.log(userId)
+    });
+
     // Write file
     cy.writeFile(`cypress/fixtures/${employeeDataFile}`,{
       userId,
@@ -107,7 +113,9 @@ describe('OrangeHRM End to End Testing', () => {
     cy.get('.oxd-text--toast-message').should("have.text", "Successfully Saved")
     cy.waitTillVisible('h6')
     cy.get('h6').should("contain.text", fullName)
-    //Search by Employee
+
+
+    //Search by Employee id
     cy.get(".oxd-main-menu-item.active").contains("PIM").click()
     cy.get('label').contains('Employee Id').parent().siblings().find('input')
         .type(userId);
